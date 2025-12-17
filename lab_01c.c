@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 
 struct Student {
     int rollNo;
@@ -12,7 +11,7 @@ void bubbleSort(struct Student s[], int n) {
     struct Student temp;
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
-            if (s[j].avgMarks < s[j + 1].avgMarks) {  // descending order
+            if (s[j].avgMarks < s[j + 1].avgMarks) {
                 temp = s[j];
                 s[j] = s[j + 1];
                 s[j + 1] = temp;
@@ -28,30 +27,26 @@ int main() {
 
     struct Student s[n];
 
-    // Input student details
     for (int i = 0; i < n; i++) {
-        printf("\nEnter details for student %d:\n", i + 1);
-        printf("Roll Number: ");
+        printf("Roll No: ");
         scanf("%d", &s[i].rollNo);
+
         printf("Name: ");
-        scanf(" %[^\n]", s[i].name);  // to read full name with spaces
+        scanf(" %[^\n]", s[i].name);
+
         printf("Age: ");
         scanf("%d", &s[i].age);
+
         printf("Average Marks: ");
         scanf("%f", &s[i].avgMarks);
     }
 
-    // Sort using bubble sort
     bubbleSort(s, n);
 
-    // Display sorted list
-    printf("\nStudents sorted in descending order of Average Marks:\n");
-    printf("--------------------------------------------------------\n");
-    printf("%-10s %-20s %-10s %-10s\n", "Roll No", "Name", "Age", "Avg Marks");
-    printf("--------------------------------------------------------\n");
-
+    printf("\nSorted Students (by Average Marks):\n");
     for (int i = 0; i < n; i++) {
-        printf("%-10d %-20s %-10d %-10.2f\n", s[i].rollNo, s[i].name, s[i].age, s[i].avgMarks);
+        printf("%d %s %d %.2f\n",
+               s[i].rollNo, s[i].name, s[i].age, s[i].avgMarks);
     }
 
     return 0;
