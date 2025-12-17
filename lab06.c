@@ -7,114 +7,85 @@ struct Node {
 };
 
 struct Node* createNode(int value) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = value;
-    newNode->left = NULL;
-    newNode->right = NULL;
-    return newNode;
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = value;
+    node->left = node->right = NULL;
+    return node;
 }
 
 struct Node* insert(struct Node* root, int value) {
-    if (root == NULL)
-        return createNode(value);
-    if (value < root->data)
-        root->left = insert(root->left, value);
-    else if (value > root->data)
-        root->right = insert(root->right, value);
+    if (!root) return createNode(value);
+    if (value < root->data) root->left = insert(root->left, value);
+    else if (value > root->data) root->right = insert(root->right, value);
     return root;
 }
 
 struct Node* search(struct Node* root, int key) {
-    if (root == NULL || root->data == key)
-        return root;
-    if (key < root->data)
-        return search(root->left, key);
-    else
-        return search(root->right, key);
+    if (!root || root->data == key) return root;
+    return (key < root->data) ? search(root->left, key) : search(root->right, key);
 }
 
 int isLeaf(struct Node* node) {
-    return (node->left == NULL && node->right == NULL);
+    return node && !node->left && !node->right;
 }
 
 struct Node* deleteLeaf(struct Node* root, int key) {
-    if (root == NULL)
+    if (!root) return NULL;
+    if (key < root->data) root->left = deleteLeaf(root->left, key);
+    else if (key > root->data) root->right = deleteLeaf(root->right, key);
+    else if (isLeaf(root)) {
+        printf("Deleting leaf node: %d\n", root->data);
+        free(root);
         return NULL;
-    if (key < root->data)
-        root->left = deleteLeaf(root->left, key);
-    else if (key > root->data)
-        root->right = deleteLeaf(root->right, key);
-    else {
-        if (isLeaf(root)) {
-            printf("Deleting leaf node: %d\n", root->data);
-            free(root);
-            return NULL;
-        } else {
-            printf("Node %d is not a leaf node, cannot delete.\n", key);
-        }
+    } else {
+        printf("Node %d is not a leaf, cannot delete.\n", key);
     }
     return root;
 }
 
 void inorder(struct Node* root) {
-    if (root != NULL) {
-        inorder(root->left);
-        printf("%d ", root->data);
-        inorder(root->right);
-    }
+    if (!root) return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
 }
 
 int main() {
     struct Node* root = NULL;
     int choice, value;
-    struct Node* result;
+    struct Node* res;
 
     while(1) {
-        printf("\n--- Binary Search Tree Menu ---\n");
-        printf("1. Search\n");
-        printf("2. Insert\n");
-        printf("3. Delete Leaf\n");
-        printf("4. Exit\n");
+        printf("\n1. Search  2. Insert  3. Delete Leaf  4. Exit\n");
         printf("Enter choice: ");
         scanf("%d",&choice);
 
-        switch(choice) {
-        case 1:
+        if(choice == 1) {
             printf("Enter element to search: ");
             scanf("%d",&value);
-            result = search(root,value);
-            if(result != NULL)
-                printf("Found\n");
-            else
-                printf("NULL\n");
-            break;
-
-        case 2:
+            res = search(root,value);
+            printf(res ? "Found\n" : "Not Found\n");
+        } else if(choice == 2) {
             printf("Enter element to insert: ");
             scanf("%d",&value);
             root = insert(root,value);
-            printf("Inserted %d\n",value);
-            printf("Inorder: ");
+            printf("Inserted %d\nInorder: ", value);
             inorder(root);
             printf("\n");
-            break;
-
-        case 3:
+        } else if(choice == 3) {
             printf("Enter leaf element to delete: ");
             scanf("%d",&value);
             root = deleteLeaf(root,value);
             printf("Inorder: ");
             inorder(root);
             printf("\n");
-            break;
-
-        case 4:
+        } else if(choice == 4) {
             printf("Exit\n");
-            exit(0);
-
-        default:
+            break;
+        } else {
             printf("Invalid choice\n");
         }
     }
     return 0;
 }
+
