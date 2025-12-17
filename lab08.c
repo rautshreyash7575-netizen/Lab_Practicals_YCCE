@@ -1,8 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #define MAX 30
 #define INF 9999
+
+struct Edge {
+    int u, v, w;
+};
 
 int parent[MAX];
 
@@ -21,53 +24,39 @@ int uni(int i, int j) {
 }
 
 int main() {
-    int n, edges;
-    int u, v, w;
-    int i, j, k = 1;
-    int mincost = 0;
-    int cost[MAX][MAX];
+    int n, e;
+    printf("Enter number of nodes and edges: ");
+    scanf("%d %d", &n, &e);
 
-    printf("Enter number of nodes: ");
-    scanf("%d", &n);
-    printf("Enter number of edges: ");
-    scanf("%d", &edges);
-
-    for (i = 1; i <= n; i++)
-        for (j = 1; j <= n; j++)
-            cost[i][j] = INF;
-
+    struct Edge edges[e];
     printf("Enter edges (u v w):\n");
-    for (i = 1; i <= edges; i++) {
-        scanf("%d %d %d", &u, &v, &w);
-        cost[u][v] = w;
-        cost[v][u] = w;
-    }
+    for (int i = 0; i < e; i++)
+        scanf("%d %d %d", &edges[i].u, &edges[i].v, &edges[i].w);
 
-    while (k < n) {
-        int a = -1, b = -1, min = INF;
-        for (i = 1; i <= n; i++) {
-            for (j = 1; j <= n; j++) {
-                if (cost[i][j] < min) {
-                    min = cost[i][j];
-                    a = i;
-                    b = j;
-                }
+    int mincost = 0, k = 0;
+
+    while (k < n - 1) {
+        int min = INF;
+        int a = -1, b = -1;
+
+        for (int i = 0; i < e; i++) {
+            int uroot = find(edges[i].u);
+            int vroot = find(edges[i].v);
+
+            if (uroot != vroot && edges[i].w < min) {
+                min = edges[i].w;
+                a = edges[i].u;
+                b = edges[i].v;
             }
         }
 
-        if (a == -1 || b == -1)
-            break;
+        if (a == -1) break;
 
-        int uroot = find(a);
-        int vroot = find(b);
-
-        if (uni(uroot, vroot)) {
-            printf("Edge %d: (%d - %d) cost: %d\n", k, a, b, min);
-            k++;
+        if (uni(find(a), find(b))) {
+            printf("Edge %d: (%d-%d) cost: %d\n", k + 1, a, b, min);
             mincost += min;
+            k++;
         }
-
-        cost[a][b] = cost[b][a] = INF;
     }
 
     printf("Minimum cost of MST = %d\n", mincost);
